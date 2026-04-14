@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DR Pricing Calculator</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #0b1b2b;
+  color: #111;
+  margin: 0;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 50px auto;
+  background: #fff;
+  padding: 40px;
+  border-radius: 10px;
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+.section {
+  margin-top: 30px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.slider {
+  margin-top: 20px;
+}
+
+.results {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f5f7fa;
+  border-radius: 8px;
+}
+
+.cta {
+  margin-top: 20px;
+  background: #22c55e;
+  color: white;
+  padding: 12px;
+  border: none;
+  width: 200px;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.highlight {
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>DR Pricing Calculator</h1>
+  <p>Estimate your DR revenue and cost based on your environment.</p>
+
+  <!-- Workloads -->
+  <div class="section">
+    <h3>Select workloads</h3>
+    <div class="grid">
+      <div>
+        <label>Servers</label>
+        <input type="number" id="servers" value="10">
+      </div>
+      <div>
+        <label>VMs</label>
+        <input type="number" id="vms" value="10">
+      </div>
+      <div>
+        <label>M365 Users</label>
+        <input type="number" id="m365" value="50">
+      </div>
+      <div>
+        <label>Storage (TB)</label>
+        <input type="number" id="storage" value="5">
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div class="section">
+    <h3>Pricing Inputs</h3>
+    <div class="grid">
+      <div>
+        <label>Price per Server ($)</label>
+        <input type="number" id="priceServer" value="150">
+      </div>
+      <div>
+        <label>Price per VM ($)</label>
+        <input type="number" id="priceVM" value="120">
+      </div>
+      <div>
+        <label>Price per M365 User ($)</label>
+        <input type="number" id="priceM365" value="10">
+      </div>
+      <div>
+        <label>Cost per TB ($)</label>
+        <input type="number" id="costTB" value="50">
+      </div>
+    </div>
+  </div>
+
+  <!-- Subscription -->
+  <div class="section">
+    <h3>Subscription Period</h3>
+    <input type="range" min="1" max="5" value="1" id="years">
+    <p><span id="yearLabel">1</span> Year(s)</p>
+  </div>
+
+  <!-- Results -->
+  <div class="results">
+    <p>MRR: <span id="mrr" class="highlight">$0</span></p>
+    <p>ARR: <span id="arr" class="highlight">$0</span></p>
+    <p>Cost: <span id="cost" class="highlight">$0</span></p>
+    <p>Profit: <span id="profit" class="highlight">$0</span></p>
+    <p>Margin: <span id="margin" class="highlight">0%</span></p>
+  </div>
+
+  <button class="cta">Contact Sales</button>
+</div>
+
+<script>
+const inputs = document.querySelectorAll("input");
+
+inputs.forEach(input => input.addEventListener("input", calculate));
+
+function calculate() {
+  const servers = +document.getElementById("servers").value;
+  const vms = +document.getElementById("vms").value;
+  const m365 = +document.getElementById("m365").value;
+  const storage = +document.getElementById("storage").value;
+
+  const priceServer = +document.getElementById("priceServer").value;
+  const priceVM = +document.getElementById("priceVM").value;
+  const priceM365 = +document.getElementById("priceM365").value;
+  const costTB = +document.getElementById("costTB").value;
+
+  const years = +document.getElementById("years").value;
+  document.getElementById("yearLabel").innerText = years;
+
+  const mrr =
+    servers * priceServer +
+    vms * priceVM +
+    m365 * priceM365;
+
+  const arr = mrr * 12 * years;
+
+  const cost = storage * costTB;
+
+  const profit = mrr - cost;
+  const margin = mrr ? (profit / mrr) * 100 : 0;
+
+  document.getElementById("mrr").innerText = `$${mrr}`;
+  document.getElementById("arr").innerText = `$${arr}`;
+  document.getElementById("cost").innerText = `$${cost}`;
+  document.getElementById("profit").innerText = `$${profit}`;
+  document.getElementById("margin").innerText = `${margin.toFixed(1)}%`;
+}
+
+calculate();
+</script>
+
+</body>
+</html>
